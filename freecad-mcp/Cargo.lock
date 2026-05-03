@@ -166,6 +166,7 @@ dependencies = [
  "anyhow",
  "mockall",
  "rmcp",
+ "schemars",
  "serde",
  "serde_json",
  "tempfile",

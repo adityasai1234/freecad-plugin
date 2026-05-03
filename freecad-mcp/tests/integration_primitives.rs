@@ -20,8 +20,8 @@ fn config_with_binary(path: PathBuf) -> Config {
 
 /// Write an executable shell script to a temp file and return its path.
 fn make_fake_binary(body: &str) -> PathBuf {
-    let dir = tempfile::tempdir().unwrap();
-    let p = dir.into_path().join("fake_freecad");
+    let dir = tempfile::tempdir().unwrap().keep();
+    let p = dir.join("fake_freecad");
     let mut f = std::fs::File::create(&p).unwrap();
     writeln!(f, "#!/bin/sh").unwrap();
     f.write_all(body.as_bytes()).unwrap();

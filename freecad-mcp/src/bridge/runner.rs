@@ -24,7 +24,7 @@ pub fn run_freecad_script(
     tmp.write_all(script.as_bytes())?;
     let tmp_path = tmp.path().to_path_buf();
 
-    let mut child = std::process::Command::new(&config.freecadcmd_path)
+    let child = std::process::Command::new(&config.freecadcmd_path)
         .arg(&tmp_path)
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
@@ -64,8 +64,7 @@ pub fn run_freecad_script(
 fn parse_last_json_line(stdout: &str) -> Result<serde_json::Value, FreeCADError> {
     stdout
         .lines()
-        .filter(|l| !l.trim().is_empty())
-        .last()
+        .rfind(|l| !l.trim().is_empty())
         .ok_or_else(|| FreeCADError::ParseError("no output from FreeCAD".into()))
         .and_then(|line| {
             serde_json::from_str(line)

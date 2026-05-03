@@ -7,11 +7,12 @@ pub mod query;
 pub mod sketcher;
 
 use crate::error::FreeCADError;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 // ─── Primitive inputs ────────────────────────────────────────────────────────
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct CreateBoxInput {
     pub length: f64,
     pub width: f64,
@@ -30,7 +31,7 @@ impl CreateBoxInput {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct CreateCylinderInput {
     pub radius: f64,
     pub height: f64,
@@ -48,7 +49,7 @@ impl CreateCylinderInput {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct CreateSphereInput {
     pub radius: f64,
     pub label: Option<String>,
@@ -63,7 +64,7 @@ impl CreateSphereInput {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct CreateConeInput {
     pub radius1: f64,
     pub radius2: f64,
@@ -84,7 +85,7 @@ impl CreateConeInput {
 
 // ─── Placement inputs ────────────────────────────────────────────────────────
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct PlaceObjectInput {
     pub object_id: String,
     pub x: f64,
@@ -95,7 +96,7 @@ pub struct PlaceObjectInput {
     pub roll: Option<f64>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct RotateObjectInput {
     pub object_id: String,
     pub yaw: f64,
@@ -105,25 +106,25 @@ pub struct RotateObjectInput {
 
 // ─── Boolean / query / export / measure inputs ───────────────────────────────
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct BooleanInput {
     pub base_id: String,
     pub tool_id: String,
     pub label: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ObjectIdInput {
     pub object_id: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ExportInput {
     pub object_id: String,
     pub filename: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct MeasureInput {
     pub object_id_a: String,
     pub object_id_b: String,
@@ -131,19 +132,19 @@ pub struct MeasureInput {
 
 // ─── Sketcher inputs ─────────────────────────────────────────────────────────
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 pub enum SketchPlane {
     XY,
     XZ,
     YZ,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct CreateSketchInput {
     pub plane: SketchPlane,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct AddRectangleInput {
     pub sketch_id: String,
     pub x: f64,
@@ -152,7 +153,7 @@ pub struct AddRectangleInput {
     pub height: f64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct AddCircleInput {
     pub sketch_id: String,
     pub cx: f64,
@@ -160,21 +161,21 @@ pub struct AddCircleInput {
     pub radius: f64,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ExtrudeInput {
     pub sketch_id: String,
     pub depth: f64,
     pub symmetric: Option<bool>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema)]
 pub enum RevolveAxis {
     X,
     Y,
     Z,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct RevolveInput {
     pub sketch_id: String,
     pub axis: RevolveAxis,

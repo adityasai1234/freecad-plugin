@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "freecad": {
+      "command": "/absolute/path/to/freecad-mcp/target/release/freecad-mcp",
+      "env": {
+        "FREECADCMD_PATH": "/usr/bin/FreeCADCmd",
+        "FREECAD_WORK_DIR": "/tmp/freecad_workspace",
+        "RUST_LOG": "freecad_mcp=info"
+      }
+    }
+  }
+}

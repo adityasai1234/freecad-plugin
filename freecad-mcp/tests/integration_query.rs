@@ -13,7 +13,7 @@ fn config_with_binary(path: PathBuf) -> Config {
 }
 
 fn make_static_binary(json: &str) -> PathBuf {
-    let dir = tempfile::tempdir().unwrap().into_path();
+    let dir = tempfile::tempdir().unwrap().keep();
     let p = dir.join("fake_freecad");
     let mut f = std::fs::File::create(&p).unwrap();
     writeln!(f, "#!/bin/sh").unwrap();
@@ -24,7 +24,7 @@ fn make_static_binary(json: &str) -> PathBuf {
 
 /// Binary that returns `exists_json` on first call, then `op_json` on subsequent calls.
 fn make_binary_exists_then(exists_json: &str, op_json: &str) -> PathBuf {
-    let dir = tempfile::tempdir().unwrap().into_path();
+    let dir = tempfile::tempdir().unwrap().keep();
     let counter = dir.join("count");
     let bin_path = dir.join("fake_freecad");
     let script = format!(

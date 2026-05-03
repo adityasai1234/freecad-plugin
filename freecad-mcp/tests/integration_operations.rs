@@ -2,7 +2,6 @@
 use freecad_mcp::config::Config;
 use freecad_mcp::tools::operations::{boolean_cut, boolean_union, boolean_intersection};
 use freecad_mcp::tools::BooleanInput;
-use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::path::PathBuf;
 
@@ -15,8 +14,8 @@ fn config_with_binary(path: PathBuf) -> Config {
 /// Binary that returns `exists_json` for the first two calls (object_exists checks for
 /// base + tool), then `op_json` for all subsequent calls (the actual operation).
 fn make_binary_with_responses(exists_json: &str, op_json: &str) -> PathBuf {
-    // Use into_path() so the temp dir is NOT cleaned up when this function returns.
-    let dir = tempfile::tempdir().unwrap().into_path();
+    // Use keep() so the temp dir is NOT cleaned up when this function returns.
+    let dir = tempfile::tempdir().unwrap().keep();
     let counter = dir.join("count");
     let bin_path = dir.join("fake_freecad");
     let script = format!(
