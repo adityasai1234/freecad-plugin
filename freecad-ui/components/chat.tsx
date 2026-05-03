@@ -45,6 +45,25 @@ export function Chat({ provider, model }: Props) {
                 if (part.type === 'text') {
                   return <p key={i} className="whitespace-pre-wrap">{part.text}</p>;
                 }
+                if (part.type.startsWith('tool-')) {
+                  const toolName = part.type.slice(5);
+                  const isResult = 'result' in part;
+                  return (
+                    <div key={i} className="mt-2 text-xs font-mono bg-gray-900 rounded p-2">
+                      <div className="text-yellow-400 mb-1">
+                        {isResult ? '✓' : '⏳'} {toolName}
+                      </div>
+                      {'input' in part && (
+                        <div className="text-gray-400">{JSON.stringify(part.input, null, 2)}</div>
+                      )}
+                      {isResult && (
+                        <div className="mt-1 text-green-400">
+                          {typeof part.result === 'string' ? part.result : JSON.stringify(part.result, null, 2)}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
                 return null;
               })}
             </div>
