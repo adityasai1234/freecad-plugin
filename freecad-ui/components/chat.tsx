@@ -14,7 +14,7 @@ export function Chat({ provider, model }: Props) {
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, error } = useChat({
     transport: new DefaultChatTransport({
       api: '/api/chat',
       body: { provider, model },
@@ -70,11 +70,23 @@ export function Chat({ provider, model }: Props) {
           </div>
         ))}
 
+        {isLoading && (
+          <div className="flex justify-start">
+            <div className="bg-gray-800 rounded-lg px-4 py-2">
+              <span className="text-gray-400 text-sm animate-pulse">Thinking...</span>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-red-400 text-sm text-center">Error: {error.message}</div>
+        )}
+
         <div ref={bottomRef} />
       </div>
 
       <form
-        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+        onSubmit={e => {
           e.preventDefault();
           if (!input.trim() || isLoading) return;
           sendMessage({ text: input });
