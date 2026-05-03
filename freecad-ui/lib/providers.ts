@@ -1,3 +1,4 @@
+import { openai } from '@ai-sdk/openai';
 import type { LanguageModel } from 'ai';
 
 export type ProviderName = 'openai' | 'gemini' | 'ollama';
@@ -26,6 +27,7 @@ export const PROVIDER_MODELS: Record<ProviderName, ModelOption[]> = {
   ],
 };
 
-export function getModel(_provider: ProviderName, _modelId: string): LanguageModel {
-  throw new Error('getModel not yet implemented');
+export function getModel(provider: ProviderName, modelId: string): LanguageModel {
+  if (provider === 'openai') return openai(modelId);
+  throw new Error(`Provider ${provider} not yet implemented`);
 }
