@@ -1,4 +1,4 @@
-import { openai } from '@ai-sdk/openai';
+import { openai, createOpenAI } from '@ai-sdk/openai';
 import { google } from '@ai-sdk/google';
 import type { LanguageModel } from 'ai';
 
@@ -31,5 +31,9 @@ export const PROVIDER_MODELS: Record<ProviderName, ModelOption[]> = {
 export function getModel(provider: ProviderName, modelId: string): LanguageModel {
   if (provider === 'openai') return openai(modelId);
   if (provider === 'gemini') return google(modelId);
-  throw new Error(`Provider ${provider} not yet implemented`);
+  const ollamaClient = createOpenAI({
+    baseURL: process.env.OLLAMA_BASE_URL ?? 'http://localhost:11434/v1',
+    apiKey: 'ollama',
+  });
+  return ollamaClient(modelId);
 }
