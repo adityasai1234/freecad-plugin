@@ -34,6 +34,62 @@ impl Config {
 
     /// Validate that the binary exists and the work directory can be created.
     pub fn validate(&self) -> anyhow::Result<()> {
-        todo!()
+        which::which(&self.freecadcmd_path).map_err(|_| {
+            anyhow::anyhow!("FreeCADCmd not found at {:?}", self.freecadcmd_path)
+        })?;
+        std::fs::create_dir_all(&self.work_dir)?;
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::env;
+    use std::sync::Mutex;
+
+    // Serialize all env-mutating tests to avoid cross-thread contamination.
+    static ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    #[test]
+    fn defaults_are_applied() {
+        let _g = ENV_LOCK.lock().unwrap();
+        env::remove_var("FREECADCMD_PATH");
+        env::remove_var("FREECAD_WORK_DIR");
+        env::remove_var("FREECAD_TIMEOUT");
+        env::remove_var("FREECAD_GUI");
+        let cfg = Config::from_env().unwrap();
+        assert_eq!(cfg.freecadcmd_path, PathBuf::from("/usr/bin/FreeCADCmd"));
+        assert_eq!(cfg.work_dir, PathBuf::from("/tmp/freecad_workspace"));
+        assert_eq!(cfg.session_doc, PathBuf::from("/tmp/freecad_workspace/session.FCStd"));
+        assert_eq!(cfg.timeout_secs, 30);
+        assert!(!cfg.gui_mode);
+    }
+
+    #[test]
+    fn env_vars_override_defaults() {
+        let _g = ENV_LOCK.lock().unwrap();
+        env::set_var("FREECADCMD_PATH", "/custom/FreeCADCmd");
+        env::set_var("FREECAD_WORK_DIR", "/custom/workspace");
+        env::set_var("FREECAD_TIMEOUT", "60");
+        env::set_var("FREECAD_GUI", "true");
+        let cfg = Config::from_env().unwrap();
+        assert_eq!(cfg.freecadcmd_path, PathBuf::from("/custom/FreeCADCmd"));
+        assert_eq!(cfg.work_dir, PathBuf::from("/custom/workspace"));
+        assert_eq!(cfg.timeout_secs, 60);
+        assert!(cfg.gui_mode);
+        env::remove_var("FREECADCMD_PATH");
+        env::remove_var("FREECAD_WORK_DIR");
+        env::remove_var("FREECAD_TIMEOUT");
+        env::remove_var("FREECAD_GUI");
+    }
+
+    #[test]
+    fn validate_fails_for_missing_binary() {
+        let _g = ENV_LOCK.lock().unwrap();
+        env::set_var("FREECADCMD_PATH", "/nonexistent/FreeCADCmd");
+        let cfg = Config::from_env().unwrap();
+        assert!(cfg.validate().is_err());
+        env::remove_var("FREECADCMD_PATH");
     }
 }
