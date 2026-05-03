@@ -16,8 +16,22 @@ pub fn session_doc_path(config: &Config) -> PathBuf {
 
 /// Check whether an object with the given ID exists in the session document.
 pub fn object_exists(object_id: &str, config: &Config) -> Result<bool, FreeCADError> {
-    let _ = (object_id, config);
-    todo!()
+    use crate::scripts::ScriptBuilder;
+
+    let mut builder = ScriptBuilder::new(&config.session_doc);
+    builder.push(format!(
+        "obj = doc.getObject({id:?})",
+        id = object_id
+    ));
+    builder.push("_exists = obj is not None");
+    let script = builder.finish(r#"{"exists": _exists}"#);
+
+    let val = crate::bridge::run(script, config)?;
+    let exists = val
+        .get("exists")
+        .and_then(|v| v.as_bool())
+        .ok_or_else(|| FreeCADError::ParseError("missing 'exists' key".into()))?;
+    Ok(exists)
 }
 
 #[cfg(test)]
